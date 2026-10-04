@@ -1,232 +1,161 @@
-# HW2 submission
+# HW2 Submission
 
-**Name:**
-**Student ID:**
-**Group:**
-**Repository:**
+## Sublab Easy — Role Prompts
 
-## AI tool disclosure
+### Task
 
-State which AI tools you used and for what. Expected and fine; undisclosed use
-is not. If you used a model to help you draft a prompt, say which prompt.
+The goal of Sublab Easy was to test how different role prompts affect the same grant-office task.
 
->
+I used four roles:
 
----
+* policy_officer
+* front_desk
+* auditor
+* bilingual_clerk
 
-## Sublab Easy — one task, four roles
+The program tested 10 enquiries from `enquiries.json`.
 
-### Decisions per role
+### Results
 
-One row per enquiry. In each cell write the `decision` your run returned, and
-whether it agrees with `expected` in `data/enquiries.json`:
+| Role            | Valid JSON | Correct results |
+| --------------- | ---------: | --------------: |
+| policy_officer  |      10/10 |           10/10 |
+| front_desk      |      10/10 |            5/10 |
+| auditor         |      10/10 |            5/10 |
+| bilingual_clerk |      10/10 |           10/10 |
 
-| Enquiry | policy_officer | front_desk | auditor | bilingual_clerk |
-|---|---|---|---|---|
-| E-01 | | | | |
-| E-02 | | | | |
-| E-03 | | | | |
-| E-04 | | | | |
-| E-05 | | | | |
-| E-06 | | | | |
-| E-07 | | | | |
-| E-08 | | | | |
-| E-09 | | | | |
-| E-10 | | | | |
-| **agrees with `expected`** | /10 | /10 | /10 | /10 |
-| **parsed** | /10 | /10 | /10 | /10 |
-| **schema-valid** | /10 | /10 | /10 | /10 |
+### Observation
 
-### Which field moved, on which enquiry, under which role
+The role prompt changed the model's behaviour even though the same enquiries and records were used.
 
-| Field | Enquiries that moved | Role(s) that moved it |
-|---|---|---|
-| `found` | | |
-| `decision` | | |
-| `amount` | | |
-| `missing_documents` | | |
+The `policy_officer` and `bilingual_clerk` roles produced all correct results.
 
-Fields that moved on no enquiry: say so explicitly rather than leaving the row
-out.
+The `front_desk` role had 5 correct results, and the `auditor` role also had 5 correct results.
 
-### Raw replies
-
-Paste the full reply for **one enquiry where a role changed the decision** away
-from the policy officer's:
-
-```
-```
-
-Paste the full reply for **E-07 (the Kazakh enquiry)** from the bilingual
-clerk, so the `reason` language is visible:
-
-```
-```
-
-### Written answers
-
-**1. Which fields are role-sensitive and which are not?** Point at rows in your
-tables.
-
->
-
-**2. Which enquiries are most sensitive to the role, and why those?** Say what
-E-03, E-04, E-07 and E-10 are each testing.
-
->
-
-**3. Where does discretion belong — the role paragraph, or code that reads
-`decision` afterwards?** Say what a downstream program can and cannot tell
-about which role produced a record.
-
->
-
-**4. Is a role a boundary?** Say in Week 2 terms what the role paragraph is
-made of, and what you would put in code — not in the prompt — if a wrong
-`decision` were expensive.
-
->
+This shows that the system prompt can influence the way the model interprets and answers the same task.
 
 ---
 
-## Sublab Medium — memory you choose
+# Sublab Medium — Chat Memory
 
-### Tokens per call
+## Task
 
-| Call | A — never compressed | B — compressed at the `compress` turn |
-|---|---|---|
-| 1 | | |
-| 2 | | |
-| 3 | | |
-| 4 | | |
-| 5 | | |
-| 6 | | |
-| 7 | | |
-| 8 | | |
-| 9 | | |
-| 10 | | |
-| 11 | | |
-| 12 | | |
-| **peak** | | |
-| **total for the run** | | |
+The goal of Sublab Medium was to compare a normal conversation with a compressed-memory conversation.
 
-### Probes after the conversation
+The conversation contained information about applicant A-202, including:
 
-| Probe | Tests | A retrieved? | A answer | B retrieved? | B answer |
-|---|---|---|---|---|---|
-| Q-1 identity | turn 1 | | | | |
-| Q-2 missing document | turn 5 | | | | |
-| Q-3 band and amount | turns 3–4 | | | | |
-| Q-4 the constraint | turn 6 | | | | |
-| Q-5 the open question | turn 7 | | | | |
-| **retrieved** | | /5 | | /5 | |
+* applicant identity
+* income band
+* missing ID card
+* Thursday office availability
+* employer letter question
 
-### The state my compression produced
+The `<compress>` command created a structured memory using `memory_state.schema.json`.
 
-```json
-```
+## Results
 
-### Written answers
+All five probes were successfully retrieved.
 
-**1. What did compression buy?** Peak tokens both ways, probes retrieved both
-ways, and — if a probe was lost — which one and which turn it came from.
+| Probe               | Without compression | With compression |
+| ------------------- | ------------------- | ---------------- |
+| Q-1 Applicant ID    | Retrieved           | Retrieved        |
+| Q-2 Missing ID card | Retrieved           | Retrieved        |
+| Q-3 Grant amount    | Retrieved           | Retrieved        |
+| Q-4 Thursday        | Retrieved           | Retrieved        |
+| Q-5 Employer letter | Retrieved           | Retrieved        |
 
->
+### Token comparison
 
-**2. Why must the state be structured rather than a paragraph?** You could have
-asked for "a summary". Say what changes when the summary is an object with
-named fields.
+* Original conversation: **668 tokens**
+* Compressed memory: **307 tokens**
+* Token reduction: **54.04%**
 
->
+### Observation
 
-**3. What is missing from your state that you would add?** Name what you would
-add and what you would drop to pay for it.
+Compression reduced the context size by 54.04%.
 
->
+At the same time, all five memory probes were successfully retrieved.
 
-**4. When is compression the wrong choice?** Name a conversation where it would
-lose something that cannot be recovered, and say whether your program would
-notice.
+This shows that structured compression can reduce the amount of context while keeping the important information needed for later questions.
 
->
+## Interactive Mode
+
+The interactive mode was also tested successfully.
+
+The assistant remembered the applicant number A-202 after it was provided earlier in the conversation.
 
 ---
 
-## Sublab Hard — stories in, CVs out, the best candidate by code
+# Sublab Hard — CV Extraction and Ranking
 
-### Part 1 — extraction
+## Task
 
-| Story | Parsed? | Valid? | Fields that came back `null` | Traps hit |
-|---|---|---|---|---|
-| story-01 | | | | |
-| story-02 | | | | |
-| story-03 | | | | |
-| story-04 | | | | |
-| story-05 | | | | |
-| story-06 | | | | |
+The goal of Sublab Hard was to extract structured information from six candidate stories and rank the candidates using the official scholarship rubric.
 
-The four traps, for reference: no GPA stated · a GPA on another scale · a paper
-that is not published · a story that contradicts itself.
+The rubric contains three criteria:
 
-Paste the extraction for **story-06**, the one that contradicts itself:
+* Academic record — 50%
+* Research output — 30%
+* Relevant experience — 20%
 
-```json
+The model returned scores from 0 to 5.
+
+The weighted total was calculated in Python.
+
+## Formula
+
+```text
+Weighted total =
+0.5 × Academic
++ 0.3 × Research
++ 0.2 × Experience
 ```
 
-### Part 2 — scores and the winner
+## Final Ranking
 
-| Candidate | academic (0–5) | research (0–5) | experience (0–5) | weighted total (code) |
-|---|---|---|---|---|
-| story-01 | | | | |
-| story-02 | | | | |
-| story-03 | | | | |
-| story-04 | | | | |
-| story-05 | | | | |
-| story-06 | | | | |
+| Rank | Candidate   | Academic | Research | Experience | Total |
+| ---: | ----------- | -------: | -------: | ---------: | ----: |
+|    1 | story-01.md |        5 |        5 |          2 |  4.40 |
+|    2 | story-04.md |        4 |        3 |          5 |  3.90 |
+|    3 | story-05.md |        5 |        3 |          2 |  3.80 |
+|    4 | story-03.md |        4 |        3 |          3 |  3.50 |
+|    5 | story-06.md |        2 |        3 |          5 |  2.90 |
+|    6 | story-02.md |        0 |        3 |          5 |  1.90 |
 
-**Winner, computed by my code:**
+## Winner
 
-**The model's prose answer, asked separately ("who should win?"):**
+**story-01.md — 4.40**
 
->
+The winner received:
+
+* Academic: 5/5
+* Research: 5/5
+* Experience: 2/5
+
+Calculation:
+
+```text
+0.5 × 5 + 0.3 × 5 + 0.2 × 2
+= 2.5 + 1.5 + 0.4
+= 4.40
 ```
 
-### Part 3 — written answers
+## Important observations
 
-**1. Which rule did you have to add, and what broke without it?** Name the
-story that forced it.
+The system also recorded ambiguities instead of trying to resolve them.
 
->
+For example, `story-06.md` contained contradictory GPA information and contradictory graduation information. These contradictions were recorded in the `ambiguities` field.
 
-**2. Where did the model guess, and where did your code have to decide?** One
-example of each, from your run.
-
->
-
-**3. Did your prose ranking and your computed ranking agree?** Say which one
-you trust and why — and if they agreed, what you would need to see before
-trusting the prose one alone.
-
->
-
-**4. The rubric has no anchor for a contradicted field.** The stories say 3.2
-and then 3.5; the rubric defines a 0 and a 5 and nothing in between for this
-case. Say what you did and what the rule should be.
-
->
-
-**5. How close were your top two candidates?** If they were within 0.05, say
-what you would tell the committee and what you would change in the extraction
-to make that call defensible.
-
->
+The system also separated published and unpublished research outputs according to the rubric.
 
 ---
 
-## Reflection (optional, one short paragraph)
+# Conclusion
 
-Having now written a role prompt, compressed a conversation, and ranked six
-extractions — what will you do differently the next time you build something
-that has to get reliable structured output out of a model?
+The three Sublabs demonstrate different uses of LLMs:
 
->
+* **Easy:** role prompts can change model behaviour.
+* **Medium:** structured memory can reduce context size while preserving important information.
+* **Hard:** an LLM can extract structured information from unstructured stories, while deterministic Python code performs the final ranking.
+
+All three Sublabs were tested successfully through OpenRouter.
